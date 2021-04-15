@@ -15,10 +15,10 @@
   #define RA_IN3_PIN  14  
 #endif
 #ifndef RA_IN4_PIN
-  #define RA_IN4_PIN  27  
+  #define RA_IN4_PIN  0  
 #endif
 #ifndef DEC_IN1_PIN
-  #define DEC_IN1_PIN  26  
+  #define DEC_IN1_PIN  0  
 #endif
 #ifndef DEC_IN2_PIN
   #define DEC_IN2_PIN  25  
@@ -31,16 +31,16 @@
 #endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef RA_STEP_PIN
-  #define RA_STEP_PIN 19  // STEP
+  #define RA_STEP_PIN 15  // STEP
 #endif
 #ifndef RA_DIR_PIN
-  #define RA_DIR_PIN  21  // DIR
+  #define RA_DIR_PIN  2  // DIR
 #endif
 #ifndef RA_EN_PIN
-  #define RA_EN_PIN   22  // Enable
+  #define RA_EN_PIN   34  // Enable
 #endif
 #ifndef RA_DIAG_PIN
-  #define RA_DIAG_PIN 23  // only needed for autohome function
+  #define RA_DIAG_PIN 0  // only needed for autohome function
 #endif
 #ifndef RA_MS0_PIN
   #define RA_MS0_PIN  4
@@ -49,7 +49,7 @@
   #define RA_MS1_PIN  0
 #endif
 #ifndef RA_MS2_PIN
-  #define RA_MS2_PIN  2
+  #define RA_MS2_PIN  21
 #endif    
 // DRIVER_TYPE_TMC2209_UART HardwareSerial port, can be shared across all drivers
 #ifndef RA_SERIAL_PORT
@@ -60,19 +60,19 @@
 #endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef DEC_STEP_PIN
-  #define DEC_STEP_PIN 16  // STEP
+  #define DEC_STEP_PIN 19  // STEP
 #endif
 #ifndef DEC_DIR_PIN
-  #define DEC_DIR_PIN  17  // DIR
+  #define DEC_DIR_PIN  21  // DIR
 #endif
 #ifndef DEC_EN_PIN
-  #define DEC_EN_PIN   5  // Enable
+  #define DEC_EN_PIN   12  // Enable
 #endif
 #ifndef DEC_DIAG_PIN
-  #define DEC_DIAG_PIN 18  // only needed for autohome function
+  #define DEC_DIAG_PIN 25  // only needed for autohome function
 #endif
 #ifndef DEC_MS0_PIN
-  #define DEC_MS0_PIN  15
+  #define DEC_MS0_PIN  32
 #endif
 #ifndef DEC_MS1_PIN
   #define DEC_MS1_PIN  8
@@ -87,7 +87,12 @@
 #ifndef DEC_DRIVER_ADDRESS
   #define DEC_DRIVER_ADDRESS 0b01  // Set by MS1/MS2 (MS1 HIGH, MS2 LOW)
 #endif
-
+/*My changes*/
+#define DRIVERUART_TX 22
+#define DRIVERUART_RX 23
+#define GPS_RX 27 
+#define GPS_TX 26
+/*End of My changes*/
 #define SW_SERIAL_UART 0
 
 // DISPLAY_TYPE_LCD_JOY_I2C_SSD1306 requires 3 analog inputs in Arduino pin numbering
