@@ -88,8 +88,6 @@
   #define DEC_DRIVER_ADDRESS 0b01  // Set by MS1/MS2 (MS1 HIGH, MS2 LOW)
 #endif
 /*My changes*/
-#define DRIVERUART_TX 22
-#define DRIVERUART_RX 23
 #define GPS_RX 27 
 #define GPS_TX 26
 /*End of My changes*/

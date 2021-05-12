@@ -152,7 +152,7 @@ void setup() {
       pinMode(RA_EN_PIN, OUTPUT);
       digitalWrite(RA_EN_PIN, LOW);
       #ifdef RA_SERIAL_PORT
-        RA_SERIAL_PORT.begin(57600, SERIAL_8N1, DRIVERUART_RX, DRIVERUART_TX);  // Start HardwareSerial comms with driver
+        RA_SERIAL_PORT.begin(57600);  // Start HardwareSerial comms with driver
       #endif
     #endif
   #endif
@@ -191,7 +191,7 @@ void setup() {
       //pinMode(DEC_MS1_PIN, OUTPUT);
       //digitalWrite(DEC_MS1_PIN, HIGH); // Logic HIGH to MS1 to get 0b01 address
       #ifdef DEC_SERIAL_PORT
-        DEC_SERIAL_PORT.begin(57600, SERIAL_8N1, DRIVERUART_RX, DRIVERUART_TX);  // Start HardwareSerial comms with driver
+        DEC_SERIAL_PORT.begin(57600);  // Start HardwareSerial comms with driver
       #endif
     #endif
   #endif
