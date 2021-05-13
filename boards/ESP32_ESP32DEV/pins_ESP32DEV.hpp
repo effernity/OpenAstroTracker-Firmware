@@ -90,6 +90,27 @@
 /*My changes*/
 #define GPS_RX 27 
 #define GPS_TX 26
+
+// DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering. This is the E1 port.
+#ifndef FOCUS_STEP_PIN
+  #define FOCUS_STEP_PIN 23  // STEP
+#endif
+#ifndef FOCUS_DIR_PIN
+  #define FOCUS_DIR_PIN  22  // DIR
+#endif
+#ifndef FOCUS_EN_PIN
+  #define FOCUS_EN_PIN   0  // Enable
+#endif
+#ifndef FOCUS_DIAG_PIN
+  #define FOCUS_DIAG_PIN 0  // only needed for autohome function
+#endif
+// DRIVER_TYPE_TMC2209_UART requires 2 additional digital pins for SoftwareSerial, can be shared across all drivers
+#ifndef DEC_SERIAL_PORT
+  #define DEC_SERIAL_PORT Serial2 // SoftwareSerial TX port
+#endif
+#ifndef FOCUS_DRIVER_ADDRESS
+  #define FOCUS_DRIVER_ADDRESS 0b00
+#endif
 /*End of My changes*/
 #define SW_SERIAL_UART 0
 
