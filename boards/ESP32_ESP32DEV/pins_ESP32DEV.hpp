@@ -105,11 +105,17 @@
   #define FOCUS_DIAG_PIN 0  // only needed for autohome function
 #endif
 // DRIVER_TYPE_TMC2209_UART requires 2 additional digital pins for SoftwareSerial, can be shared across all drivers
-#ifndef DEC_SERIAL_PORT
-  #define DEC_SERIAL_PORT Serial2 // SoftwareSerial TX port
+#ifndef FOCUS_SERIAL_PORT_TX
+  #define FOCUS_SERIAL_PORT_TX 16 // SoftwareSerial TX port
+#endif
+#ifndef FOCUS_SERIAL_PORT_RX
+  #define FOCUS_SERIAL_PORT_RX 17 // SoftwareSerial RX port
+#endif
+#ifndef FOCUS_SERIAL_PORT
+  #define FOCUS_SERIAL_PORT Serial2 // SoftwareSerial TX port
 #endif
 #ifndef FOCUS_DRIVER_ADDRESS
-  #define FOCUS_DRIVER_ADDRESS 0b00
+  #define FOCUS_DRIVER_ADDRESS 0b10
 #endif
 /*End of My changes*/
 #define SW_SERIAL_UART 0

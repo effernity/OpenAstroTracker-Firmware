@@ -714,7 +714,7 @@ bool Mount::connectToDriver( TMC2209Stepper* driver, const char *driverKind ) {
       bool UART_Rx_connected = false;
       UART_Rx_connected = connectToDriver( _driverFocus, "Focus" );
       if (!UART_Rx_connected) {
-          digitalWrite(ALT_EN_PIN, HIGH);    //Disable motor for safety reasons if UART connection fails to avoid operating at incorrect rms_current
+          digitalWrite(FOCUS_EN_PIN, HIGH);    //Disable motor for safety reasons if UART connection fails to avoid operating at incorrect rms_current
       }
     #endif
     _driverFocus->toff(0);
