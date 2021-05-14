@@ -1,3 +1,17 @@
+**V1.9.11 - Updates**
+- Add support for focuser on E1 motor for MKS board. 
+- Add focuser command support to LX200 protocol.
+
+**V1.9.10 - Updates**
+- Fixed a bug that caused a compilation fail when enabling LCD_BUTTON_TEST
+- Allowed connection test to be set in local config
+
+**V1.9.09 - Updates**
+- Sample Local Config - disabled as default
+
+**V1.9.08 - Updates**
+- Continuous integration improvements. Checking for version and changelog changes automatically
+
 **V1.9.07 - Updates**
 - ALT and AZ steppers can now be enabled and configured seperately.
 - Reduced hold current for AZ and ALT to 10% if using TMCs and NEMAs.
