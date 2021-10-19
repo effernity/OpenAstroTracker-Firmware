@@ -1,3 +1,57 @@
+**V1.9.34 - Updates**
+- Added two Meade commands: :XGDP# and :XSDPnnn# to retrieve and set the DEC parking offset.
+- Fixed a bug that incorrectly returned a Homing status when the Hall sensor was enabled.
+- Removing support for bluetooth
+- Removing support for running steppers in main loop
+
+**V1.9.33 - Updates**
+- Fixed a bug that did not reset RA coordinate after setting home position.
+
+**V1.9.32 - Updates**
+- Add inverted axis support for alt/az
+
+**V1.9.31 - Updates**
+- Focuser can be set to be always on with non-100% holding current.
+- Focuser got its own debug channel.
+- Added some more logging.
+
+**V1.9.30 - Updates**
+- Updated alt/az code to correct SPR errors and add support for AutoPA v2.
+
+**V1.9.29 - Updates**
+- Support for a Hall sensor based auto homing routine for the RA ring.
+
+**V1.9.28 - Updates**
+- Add configurations for OAM
+
+**V1.9.27 - Updates**
+- Fix github actions formatting check
+
+**V1.9.26 - Updates**
+- Delete unintentionally added workflow file
+
+**V1.9.25 - Updates**
+- clang-format codebase
+
+**V1.9.24 - Updates**
+- Fix hold currents of AZ/ALT/Focuser drivers.
+
+**V1.9.23 - Updates**
+- Add option to keep focuser motor enabled after moving.
+
+**V1.9.22 - Updates**
+- Add focuser pins for MKS Gen L v2.0.
+
+**V1.9.21 - Updates**
+- Fix southern hemisphere reversed DEC free slew directions
+
+**V1.9.20 - Updates**
+- Made github version check more robust
+
+**V1.9.19 - Updates**
+- Added support to reset the focus stepper position
+- Fixed some focus validation tests
+
 **V1.9.18 - Updates**
 - Fix RA guiding multiplier not being applied correct
 
