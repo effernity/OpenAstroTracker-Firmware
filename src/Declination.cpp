@@ -11,8 +11,17 @@
 // Parses the RA or DEC from a string that has an optional sign, a two digit degree, a seperator, a two digit minute, a seperator and a two digit second.
 // For example:   -45*32:11 or 23:44:22
 
-// In the northern hemisphere, 0 is north pole, -180 is south pole
-// In the southern hemisphere, 0 is south pole, -180 is north pole
+// In the northern hemisphere, 0 is north pole, 180 and -180 is south pole
+//------------------ S---------------------------------------- N ---------------------------------- S
+// Celestial       -90    -60    -30      0      30    60     90    60    30    0    -30   -60    -90
+//                                    Celestial = 90 - abs(Declination)
+// Declination    -180    -150   -120    -90    -60   -30     0     30    60    90   120   150    180
+
+// In the southern hemisphere, 0 is south pole, 180 and -180 is north pole
+//------------------ N---------------------------------------- S ---------------------------------- N
+// Celestial        90     60     30      0     -30   -60     -90    -60    -30    0    30   60    90
+//                                    Celestial = -90 + abs(Declination)
+// Declination    -180    -150   -120    -90    -60   -30     0     30    60    90   120   150    180
 Declination::Declination() : DayTime()
 {
 }
@@ -48,14 +57,14 @@ float Declination::getTotalDegrees() const
 
 void Declination::checkHours()
 {
-    if (totalSeconds > 0)
+    if (totalSeconds > arcSecondsPerHemisphere)
     {
-        LOGV1(DEBUG_GENERAL, F("CheckHours: Degrees is more than 0, clamping"));
-        totalSeconds = 0;
+        LOG(DEBUG_GENERAL, "[DECLINATION]: CheckHours: Degrees is more than 180, clamping");
+        totalSeconds = arcSecondsPerHemisphere;
     }
     if (totalSeconds < -arcSecondsPerHemisphere)
     {
-        LOGV1(DEBUG_GENERAL, F("CheckHours: Degrees is less than -180, clamping"));
+        LOG(DEBUG_GENERAL, "[DECLINATION]: CheckHours: Degrees is less than -180, clamping");
         totalSeconds = -arcSecondsPerHemisphere;
     }
 }
@@ -78,7 +87,7 @@ const char *Declination::ToString() const
 
     *p++ = ' ';
     *p++ = '(';
-    strcpy(p, String(NORTHERN_HEMISPHERE ? getTotalHours() + 90 : -90 - getTotalHours(), 4).c_str());
+    strcpy(p, String(NORTHERN_HEMISPHERE ? 90 - fabsf(getTotalHours()) : -90 + fabsf(getTotalHours()), 4).c_str());
     strcat(p, ")");
 
     return achBufDeg;
@@ -87,26 +96,32 @@ const char *Declination::ToString() const
 Declination Declination::ParseFromMeade(String const &s)
 {
     Declination result;
-    LOGV2(DEBUG_GENERAL, F("Declination.Parse(%s)"), s.c_str());
+    LOG(DEBUG_GENERAL, "[DECLINATION]: Declination.Parse(%s)", s.c_str());
 
     // Use the DayTime code to parse it...
     DayTime dt = DayTime::ParseFromMeade(s);
 
     // ...and then correct for hemisphere
-    result.totalSeconds = dt.getTotalSeconds() + (NORTHERN_HEMISPHERE ? -(arcSecondsPerHemisphere / 2) : (arcSecondsPerHemisphere / 2));
-    LOGV3(DEBUG_GENERAL, F("Declination.Parse(%s) -> %s"), s.c_str(), result.ToString());
+    result.totalSeconds = NORTHERN_HEMISPHERE ? (arcSecondsPerHemisphere / 2) - dt.getTotalSeconds()
+                                              : -(arcSecondsPerHemisphere / 2) + dt.getTotalSeconds();
+    LOG(DEBUG_GENERAL, "[DECLINATION]: Declination.Parse(%s) -> %s (%l)", s.c_str(), result.ToString(), result.totalSeconds);
     return result;
 }
 
 Declination Declination::FromSeconds(long seconds)
 {
-    seconds += (NORTHERN_HEMISPHERE ? -(arcSecondsPerHemisphere / 2) : (arcSecondsPerHemisphere / 2));
-    return Declination(1.0 * seconds / 3600.0);
+    const auto secondsFloat                 = static_cast<float>(seconds);
+    const auto arcSecondsPerHemisphereFloat = static_cast<float>(arcSecondsPerHemisphere);
+#if NORTHERN_HEMISPHERE == 1
+    return Declination(((arcSecondsPerHemisphereFloat / 2.0f) - secondsFloat) / 3600.0f);
+#else
+    return Declination(((-arcSecondsPerHemisphereFloat / 2.0f) + secondsFloat) / 3600.0f);
+#endif
 }
 
 const char *Declination::formatString(char *targetBuffer, const char *format, long *) const
 {
-    long secs = totalSeconds;
-    secs      = NORTHERN_HEMISPHERE ? (secs + arcSecondsPerHemisphere / 2) : (secs - arcSecondsPerHemisphere / 2);
+    long secs
+        = NORTHERN_HEMISPHERE ? (arcSecondsPerHemisphere / 2) - labs(totalSeconds) : -(arcSecondsPerHemisphere / 2) + labs(totalSeconds);
     return DayTime::formatString(targetBuffer, format, &secs);
 }

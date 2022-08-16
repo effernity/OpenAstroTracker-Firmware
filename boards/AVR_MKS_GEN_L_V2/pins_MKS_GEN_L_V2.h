@@ -4,31 +4,6 @@
 
 #pragma once
 
-// DRIVER_TYPE_ULN2003 requires 4 digital outputs in Arduino pin numbering
-#ifndef RA_IN1_PIN
-    #define RA_IN1_PIN 63
-#endif
-#ifndef RA_IN2_PIN
-    #define RA_IN2_PIN 38
-#endif
-#ifndef RA_IN3_PIN
-    #define RA_IN3_PIN 54
-#endif
-#ifndef RA_IN4_PIN
-    #define RA_IN4_PIN 55
-#endif
-#ifndef DEC_IN1_PIN
-    #define DEC_IN1_PIN 64
-#endif
-#ifndef DEC_IN2_PIN
-    #define DEC_IN2_PIN 56
-#endif
-#ifndef DEC_IN3_PIN
-    #define DEC_IN3_PIN 60
-#endif
-#ifndef DEC_IN4_PIN
-    #define DEC_IN4_PIN 61
-#endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef RA_STEP_PIN
     #define RA_STEP_PIN 54  // STEP
@@ -96,31 +71,6 @@
 
 #define SW_SERIAL_UART 1
 
-// DRIVER_TYPE_ULN2003 requires 4 digital outputs in Arduino pin numbering
-#ifndef AZ_IN1_PIN
-    #define AZ_IN1_PIN 65
-#endif
-#ifndef AZ_IN2_PIN
-    #define AZ_IN2_PIN 62
-#endif
-#ifndef AZ_IN3_PIN
-    #define AZ_IN3_PIN 46
-#endif
-#ifndef AZ_IN4_PIN
-    #define AZ_IN4_PIN 48
-#endif
-#ifndef ALT_IN1_PIN
-    #define ALT_IN1_PIN 66
-#endif
-#ifndef ALT_IN2_PIN
-    #define ALT_IN2_PIN 24
-#endif
-#ifndef ALT_IN3_PIN
-    #define ALT_IN3_PIN 26
-#endif
-#ifndef ALT_IN4_PIN
-    #define ALT_IN4_PIN 28
-#endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef AZ_STEP_PIN
     #define AZ_STEP_PIN 46  // STEP
@@ -168,19 +118,6 @@
     #define ALT_DRIVER_ADDRESS 0b00
 #endif
 
-// DRIVER_TYPE_ULN2003 requires 4 digital outputs in Arduino pin numbering
-#ifndef FOCUS_IN1_PIN
-    #define FOCUS_IN1_PIN 66
-#endif
-#ifndef FOCUS_IN2_PIN
-    #define FOCUS_IN2_PIN 30
-#endif
-#ifndef FOCUS_IN3_PIN
-    #define FOCUS_IN3_PIN 36
-#endif
-#ifndef FOCUS_IN4_PIN
-    #define FOCUS_IN4_PIN 34
-#endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering. This is the E1 port.
 #ifndef FOCUS_STEP_PIN
     #define FOCUS_STEP_PIN 36  // STEP
@@ -212,22 +149,22 @@
 
 // DISPLAY_TYPE_LCD_KEYPAD requires 6 digital & 1 analog output in Arduino pin numbering
 #ifndef LCD_PIN4
-    #define LCD_PIN4 57
+    #define LCD_PIN4 17
 #endif
 #ifndef LCD_PIN5
-    #define LCD_PIN5 6
+    #define LCD_PIN5 16
 #endif
 #ifndef LCD_PIN6
-    #define LCD_PIN6 45
+    #define LCD_PIN6 23
 #endif
 #ifndef LCD_PIN7
-    #define LCD_PIN7 5
+    #define LCD_PIN7 25
 #endif
 #ifndef LCD_PIN8
-    #define LCD_PIN8 43
+    #define LCD_PIN8 27
 #endif
 #ifndef LCD_PIN9
-    #define LCD_PIN9 47
+    #define LCD_PIN9 29
 #endif
 
 // DISPLAY_TYPE_LCD_KEYPAD requires 1 analog input in Arduino pin numbering
@@ -236,6 +173,20 @@
 #endif
 
 //Pin to turn on dew heater MOSFET
-#ifndef DEW_HEATER_PIN
-    #define DEW_HEATER_PIN 10
+#ifndef DEW_HEATER_PIN1
+    #define DEW_HEATER_1_PIN 10
+#endif
+#ifndef DEW_HEATER_PIN2
+    #define DEW_HEATER_2_PIN 7
+#endif
+
+//Serial port for external debugging
+#if DEBUG_SEPARATE_SERIAL == 1
+    #ifndef DEBUG_SERIAL_PORT
+        #define DEBUG_SERIAL_PORT Serial3  //D14 (Y-MIN) - TX3 and D15 (Y-MAX) - RX3
+    #endif
+#else
+    #ifndef DEBUG_SERIAL_PORT
+        #define DEBUG_SERIAL_PORT Serial
+    #endif
 #endif

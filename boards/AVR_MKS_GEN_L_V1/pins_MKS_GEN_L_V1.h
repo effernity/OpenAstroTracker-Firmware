@@ -4,31 +4,6 @@
 
 #pragma once
 
-// DRIVER_TYPE_ULN2003 requires 4 digital outputs in Arduino pin numbering
-#ifndef RA_IN1_PIN
-    #define RA_IN1_PIN 37
-#endif
-#ifndef RA_IN2_PIN
-    #define RA_IN2_PIN 17
-#endif
-#ifndef RA_IN3_PIN
-    #define RA_IN3_PIN 23
-#endif
-#ifndef RA_IN4_PIN
-    #define RA_IN4_PIN 27
-#endif
-#ifndef DEC_IN1_PIN
-    #define DEC_IN1_PIN 35
-#endif
-#ifndef DEC_IN2_PIN
-    #define DEC_IN2_PIN 16
-#endif
-#ifndef DEC_IN3_PIN
-    #define DEC_IN3_PIN 25
-#endif
-#ifndef DEC_IN4_PIN
-    #define DEC_IN4_PIN 29
-#endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef RA_STEP_PIN
     #define RA_STEP_PIN 54  // STEP
@@ -78,31 +53,6 @@
 
 #define SW_SERIAL_UART 1
 
-// DRIVER_TYPE_ULN2003 requires 4 digital outputs in Arduino pin numbering
-#ifndef AZ_IN1_PIN
-    #define AZ_IN1_PIN 50
-#endif
-#ifndef AZ_IN2_PIN
-    #define AZ_IN2_PIN 31
-#endif
-#ifndef AZ_IN3_PIN
-    #define AZ_IN3_PIN 33
-#endif
-#ifndef AZ_IN4_PIN
-    #define AZ_IN4_PIN 49
-#endif
-#ifndef ALT_IN1_PIN
-    #define ALT_IN1_PIN 52
-#endif
-#ifndef ALT_IN2_PIN
-    #define ALT_IN2_PIN 53
-#endif
-#ifndef ALT_IN3_PIN
-    #define ALT_IN3_PIN 51
-#endif
-#ifndef ALT_IN4_PIN
-    #define ALT_IN4_PIN 41
-#endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef AZ_STEP_PIN
     #define AZ_STEP_PIN 46  // STEP
@@ -157,22 +107,22 @@
 
 // DISPLAY_TYPE_LCD_KEYPAD requires 6 digital & 1 analog output in Arduino pin numbering
 #ifndef LCD_PIN4
-    #define LCD_PIN4 63
+    #define LCD_PIN4 17
 #endif
 #ifndef LCD_PIN5
-    #define LCD_PIN5 40
+    #define LCD_PIN5 16
 #endif
 #ifndef LCD_PIN6
-    #define LCD_PIN6 42
+    #define LCD_PIN6 23
 #endif
 #ifndef LCD_PIN7
-    #define LCD_PIN7 59
+    #define LCD_PIN7 25
 #endif
 #ifndef LCD_PIN8
-    #define LCD_PIN8 64
+    #define LCD_PIN8 27
 #endif
 #ifndef LCD_PIN9
-    #define LCD_PIN9 44
+    #define LCD_PIN9 29
 #endif
 
 // DISPLAY_TYPE_LCD_KEYPAD requires 1 analog input in Arduino pin numbering
@@ -181,6 +131,20 @@
 #endif
 
 //Pin to turn on dew heater MOSFET
-#ifndef DEW_HEATER_PIN
-    #define DEW_HEATER_PIN 10
+#ifndef DEW_HEATER_PIN1
+    #define DEW_HEATER_1_PIN 10
+#endif
+#ifndef DEW_HEATER_PIN2
+    #define DEW_HEATER_2_PIN 7
+#endif
+
+//Serial port for external debugging
+#if DEBUG_SEPARATE_SERIAL == 1
+    #ifndef DEBUG_SERIAL_PORT
+        #define DEBUG_SERIAL_PORT Serial3  //D14 (Y-MIN) - TX3 and D15 (Y-MAX) - RX3
+    #endif
+#else
+    #ifndef DEBUG_SERIAL_PORT
+        #define DEBUG_SERIAL_PORT Serial
+    #endif
 #endif

@@ -42,23 +42,31 @@ void processSerialData()
         {
             if (buffer[0] == 0x06)
             {
-                LOGV1(DEBUG_SERIAL, F("Serial: Received: ACK request, replying 1"));
-                Serial.print('1');
+                LOG(DEBUG_SERIAL, "[SERIAL]: Received: ACK request, replying P");
+                // When not debugging, print the result to the serial port .
+                // When debugging, only print the result to Serial if we're on seperate ports.
+    #if (DEBUG_LEVEL == DEBUG_NONE) || (DEBUG_SEPARATE_SERIAL == 1)
+                Serial.print('P');
+    #endif
             }
             else
             {
                 String inCmd = String(buffer[0]) + Serial.readStringUntil('#');
-                LOGV3(DEBUG_SERIAL, F("Serial: ReceivedCommand(%d): [%s]"), inCmd.length(), inCmd.c_str());
+                LOG(DEBUG_SERIAL, "[SERIAL]: ReceivedCommand(%d chars): [%s]", inCmd.length(), inCmd.c_str());
 
                 String retVal = MeadeCommandProcessor::instance()->processCommand(inCmd);
                 if (retVal != "")
                 {
-                    LOGV2(DEBUG_SERIAL, F("Serial: RepliedWith:  [%s]"), retVal.c_str());
+                    LOG(DEBUG_SERIAL, "[SERIAL]: RepliedWith:  [%s]", retVal.c_str());
+                    // When not debugging, print the result to the serial port .
+                    // When debugging, only print the result to Serial if we're on seperate ports.
+    #if (DEBUG_LEVEL == DEBUG_NONE) || (DEBUG_SEPARATE_SERIAL == 1)
                     Serial.print(retVal);
+    #endif
                 }
                 else
                 {
-                    LOGV1(DEBUG_SERIAL, F("Serial: NoReply"));
+                    LOG(DEBUG_SERIAL, "[SERIAL]: NoReply");
                 }
             }
         }

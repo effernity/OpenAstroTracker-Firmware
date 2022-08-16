@@ -1,3 +1,105 @@
+**V1.11.9 - Updates**
+- Change storage of RA and DEC steps/degree to be independent of microstepping settings.
+
+**V1.11.8 - Updates**
+- Remove dead code
+- Clean up README
+
+**V1.11.7 - Updates**
+- Add .mailmap file
+
+**V1.11.6 - Updates**
+- Fix platformio GitHub workflow to coincide with 6.0.2 update
+- Disable Wdouble-promotion globally due to esp32 build failure and GCC bug 55578
+
+**V1.11.5 - Updates**
+- Corrected Longitude parsing to account for sign
+- Corrected Longitude output to provide sign
+- Corrected inverted UTC offset
+- Corrected handshake response to 0x06 to be P for Polar mode
+
+**V1.11.4 - Updates**
+- Allow disabling Points Of Interest in LCD menu
+
+**V1.11.3 - Updates**
+- Change logging macro LOGVx to LOG
+
+**V1.11.2 - Updates**
+- Cache build files by default
+
+**V1.11.1 - Updates**
+- Fix ESP32 build failure
+
+**V1.11.0 - Updates**
+- Tracking now stops automaticaly when the end of the RA ring is reached (using a configurable limit)
+- Syncing no longer changes where the firmware expects "home" to be for both DEC and RA
+- Fixed RA limits to allow proper meridian flips when slewing
+- Fixed parking/return-to-home functionality
+- Fixed potential issue of DEC/RA flipping incorrectly when in the southern hemisphere
+- Added configuration option for DEC limits
+- Fixed a bug in RA Autohoming
+- Added option for external debugging on separate serial port to allow debugging while using LX200 control
+- Cleaned up logging some more
+
+**V1.10.12 - Updates**
+- Remove enabling tracking when home is set.
+
+**V1.10.11 - Updates**
+- Revise default microstep settings when using UART
+- Revise default DEC guide pulse settings to match RA
+
+**V1.10.10 - Updates**
+- Fix Arduino IDE build
+
+**V1.10.9 - Updates**
+- Change UART TX test to be configurable movement distance
+
+**V1.10.8 - Updates**
+- Add initial unit test structure
+- Unit tests for MappedDict.hpp
+
+**V1.10.7 - Updates**
+- Fix Arduino IDE issues
+
+**V1.10.6 - Updates**
+- Use consistent enable pin logic for all drivers.
+- Increase maximum current for TMC2209 to 2A in accordance with BigTreeTech's published maximum continuous drive current.
+
+**V1.10.5 - Updates**
+- Add ability to disable tracking at boot by default
+
+**V1.10.4 - Updates**
+- Cleaned up logging somewhat
+- Ensured all log messages have a category start word.
+- Ensured all log messages are stored in Flash memory.
+
+**V1.10.3 - Updates**
+- Add optional parameter to Meade Extension commands :XSDLL# and :XSDLU# to allow direct setting of DEC limits
+
+**V1.10.2 - Updates**
+- Revise default MKS LCD pins to match ribbon cable LCD assembly.
+
+**V1.10.1 - Updates**
+- fix a bug with "Set Home" on OAM
+
+**V1.10.0 - Updates**
+- Delete support of ULN2003 drivers
+
+**V1.9.38 - Updates**
+- Add support for RAMPS 1.4 Arduino Mega shields
+
+**V1.9.37 - Updates**
+- Add HE1 to dew heater output for MKS boards
+
+**V1.9.36 - Updates**
+- Removed auto-homing code that was based on stall guard
+- Converted Hall sensor based auto homing to be asynchronous (via state machine) instead of blocking
+- Allowed user to specify the distance (number of hours) to search for Hall sensor in Meade command
+- Allowed overriding the guide pulse multiplier in local config
+
+**V1.9.35 - Updates**
+- Enable configuration of hold current setting for AZ and ALT steppers when always energized
+
 **V1.9.34 - Updates**
 - Added two Meade commands: :XGDP# and :XSDPnnn# to retrieve and set the DEC parking offset.
 - Fixed a bug that incorrectly returned a Homing status when the Hall sensor was enabled.

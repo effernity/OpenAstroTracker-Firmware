@@ -17,7 +17,7 @@ DayTime DayTime::ParseFromMeade(String const &s)
     DayTime result;
     int i    = 0;
     long sgn = 1;
-    LOGV2(DEBUG_MEADE, F("DayTime: Parse Coord from [%s]"), s.c_str());
+    LOG(DEBUG_MEADE, "[DAYTIME]: Parse Coord from [%s]", s.c_str());
     // Check whether we have a sign. This should be able to parse RA and DEC strings (RA never has a sign, and DEC should always have one).
     if ((s[i] == '-') || (s[i] == '+'))
     {
@@ -27,34 +27,34 @@ DayTime DayTime::ParseFromMeade(String const &s)
 
     // Degs can be 2 or 3 digits
     long degs = s[i++] - '0';
-    LOGV3(DEBUG_MEADE, F("DayTime: 1st digit [%c] -> degs=%l"), s[i - 1], degs);
+    LOG(DEBUG_MEADE, "[DAYTIME]: 1st digit [%c] -> degs=%l", s[i - 1], degs);
     degs = degs * 10 + s[i++] - '0';
-    LOGV3(DEBUG_MEADE, F("DayTime: 2nd digit [%c] -> degs=%l"), s[i - 1], degs);
+    LOG(DEBUG_MEADE, "[DAYTIME]: 2nd digit [%c] -> degs=%l", s[i - 1], degs);
 
     // Third digit?
     if ((s[i] >= '0') && (s[i] <= '9'))
     {
         degs = degs * 10 + s[i++] - '0';
-        LOGV3(DEBUG_MEADE, F("DayTime: 3rd digit [%c] -> degs=%d"), s[i - 1], degs);
+        LOG(DEBUG_MEADE, "[DAYTIME]: 3rd digit [%c] -> degs=%d", s[i - 1], degs);
     }
     i++;  // Skip seperator
 
     int mins = s.substring(i, i + 2).toInt();
-    LOGV3(DEBUG_MEADE, F("DayTime: Minutes are [%s] -> mins=%d"), s.substring(i, i + 2).c_str(), mins);
+    LOG(DEBUG_MEADE, "[DAYTIME]: Minutes are [%s] -> mins=%d", s.substring(i, i + 2).c_str(), mins);
     int secs = 0;
     if (int(s.length()) > i + 4)
     {
         secs = s.substring(i + 3, i + 5).toInt();
-        LOGV3(DEBUG_MEADE, F("DayTime: Seconds are [%s] -> secs=%d"), s.substring(i + 3, i + 5).c_str(), secs);
+        LOG(DEBUG_MEADE, "[DAYTIME]: Seconds are [%s] -> secs=%d", s.substring(i + 3, i + 5).c_str(), secs);
     }
     else
     {
-        LOGV3(DEBUG_MEADE, F("DayTime: No Seconds. slen %d is not > %d"), s.length(), i + 4);
+        LOG(DEBUG_MEADE, "[DAYTIME]: No Seconds. slen %d is not > %d", s.length(), i + 4);
     }
     // Get the signed total seconds specified....
     result.totalSeconds = sgn * (((degs * 60L + mins) * 60L) + secs);
 
-    LOGV5(DEBUG_MEADE, F("DayTime: TotalSeconds are %l from %lh %dm %ds"), result.totalSeconds, degs, mins, secs);
+    LOG(DEBUG_MEADE, "[DAYTIME]: TotalSeconds are %l from %lh %dm %ds", result.totalSeconds, degs, mins, secs);
 
     return result;
 }
@@ -145,9 +145,9 @@ void DayTime::set(const DayTime &other)
 }
 
 // Add hours, wrapping days (which are not tracked)
-void DayTime::addHours(int deltaHours)
+void DayTime::addHours(float deltaHours)
 {
-    totalSeconds += (long) deltaHours * 3600L;
+    totalSeconds += long(deltaHours * 3600L);
     checkHours();
 }
 
@@ -267,13 +267,14 @@ const char *DayTime::formatStringImpl(char *targetBuffer, const char *format, ch
         i++;
     }
 
-    if (degs >= 100)
+    long absdegs = labs(degs);
+    if (absdegs >= 100)
     {
-        achDegs[i++] = '0' + min(9L, (degs / 100));
-        degs         = degs % 100;
+        achDegs[i++] = '0' + min(9L, (absdegs / 100));
+        absdegs      = absdegs % 100;
     }
 
-    printTwoDigits(achDegs + i, degs);
+    printTwoDigits(achDegs + i, absdegs);
     printTwoDigits(achMins, mins);
     printTwoDigits(achSecs, secs);
 
@@ -294,6 +295,11 @@ const char *DayTime::formatStringImpl(char *targetBuffer, const char *format, ch
                     {
                         switch (macro)
                         {
+                            case '+':
+                                {
+                                    *p++ = (degs < 0 ? '-' : '+');
+                                }
+                                break;
                             case 'd':
                                 {
                                     strcpy(p, achDegs);

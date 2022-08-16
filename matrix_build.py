@@ -13,22 +13,20 @@ from constraint import *
 CONTINUE_ON_ERROR = False
 
 BOARDS = [
-    "mega2560",
     "mksgenlv21",
     "mksgenlv2",
     "mksgenlv1",
     "esp32",
+    "ramps",
 ]
 
 STEPPER_TYPES = [
     "STEPPER_TYPE_NONE",
-    "STEPPER_TYPE_28BYJ48",
-    "STEPPER_TYPE_NEMA17",
+    "STEPPER_TYPE_ENABLED",
 ]
 
 DRIVER_TYPES = [
     "DRIVER_TYPE_NONE",
-    "DRIVER_TYPE_ULN2003",
     "DRIVER_TYPE_A4988_GENERIC",
     "DRIVER_TYPE_TMC2209_STANDALONE",
     "DRIVER_TYPE_TMC2209_UART",
@@ -58,6 +56,7 @@ BUILD_FLAGS = {
     "FOCUS_STEPPER_TYPE": STEPPER_TYPES,
     "FOCUS_DRIVER_TYPE": DRIVER_TYPES,
     "DISPLAY_TYPE": DISPLAY_TYPES,
+    "DEBUG_LEVEL": ["DEBUG_NONE", "DEBUG_ANY"],
     "RA_MOTOR_CURRENT_RATING": "1",
     "RA_OPERATING_CURRENT_SETTING": "1",
     "DEC_MOTOR_CURRENT_RATING": "1",
@@ -74,10 +73,7 @@ STEPPER_SUPPORT = {
     "STEPPER_TYPE_NONE": {
         "DRIVER_TYPE_NONE"
     },
-    "STEPPER_TYPE_28BYJ48": {
-        "DRIVER_TYPE_ULN2003"
-    },
-    "STEPPER_TYPE_NEMA17": {
+    "STEPPER_TYPE_ENABLED": {
         "DRIVER_TYPE_A4988_GENERIC",
         "DRIVER_TYPE_TMC2209_STANDALONE",
         "DRIVER_TYPE_TMC2209_UART",
@@ -92,20 +88,6 @@ def update_dict(orig, patch):
 
 
 BOARD_SUPPORT = {
-    "mega2560": update_dict(BUILD_FLAGS, {
-        "AZ_DRIVER_TYPE": [
-            "DRIVER_TYPE_NONE"
-        ],
-        "AZ_STEPPER_TYPE": [
-            "STEPPER_TYPE_NONE"
-        ],
-        "ALT_DRIVER_TYPE": [
-            "DRIVER_TYPE_NONE"
-        ],
-        "ALT_STEPPER_TYPE": [
-            "STEPPER_TYPE_NONE"
-        ],
-    }),
     "esp32": update_dict(BUILD_FLAGS, {
         "USE_GPS": [0],
         "USE_GYRO_LEVEL": [0],
@@ -162,6 +144,14 @@ BOARD_SUPPORT = {
             "STEPPER_TYPE_NONE"
         ],
     }),
+    "ramps": update_dict(BUILD_FLAGS, {
+        "USE_GPS": [0],
+        "USE_GYRO_LEVEL": [0],
+        "DISPLAY_TYPE": [
+            "DISPLAY_TYPE_NONE",
+            "DISPLAY_TYPE_LCD_KEYPAD"
+        ],
+    }),
 }
 
 SHORT_STRINGS = {
@@ -171,7 +161,6 @@ SHORT_STRINGS = {
     "STEPPER_TYPE_28BYJ48": "28BYJ48",
     "STEPPER_TYPE_NEMA17": "NEMA17",
     "DRIVER_TYPE_NONE": "NONE",
-    "DRIVER_TYPE_ULN2003": "ULN2003",
     "DRIVER_TYPE_A4988_GENERIC": "A4988_GENERIC",
     "DRIVER_TYPE_TMC2209_STANDALONE": "TMC2209_STANDALONE",
     "DRIVER_TYPE_TMC2209_UART": "TMC2209_UART",

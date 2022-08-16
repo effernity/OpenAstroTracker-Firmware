@@ -157,12 +157,13 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //      Description:
 //        Get Site Longitude
 //      Returns:
-//        "DDD*MM#"
+//        "sDDD*MM#"
 //      Parameters:
-//        "DDD" is the longitude in degrees
-//        "MM" the minutes
+//        "s" is the sign of the longitude
+//        "DDD" is the degrees
+//        "MM" is the minutes
 //      Remarks:
-//        Longitudes are from 0 to 360 going WEST. so 179W is 359 and 179E is 1.
+//        Note that this is the actual longitude, but east coordinates are negative (opposite of normal cartographic coordinates)
 //
 // :Gc#
 //      Description:
@@ -172,12 +173,14 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //
 // :GG#
 //      Description:
-//        Get UTC offset time
+//        Get offset to UTC time
 //      Returns:
 //        "sHH#"
 //      Parameters:
 //        "s" is the sign
-//        "HH" are the number of hours that need to be added to local time to convert to UTC time
+//        "HH" is the number of hours
+//      Remarks
+//        Note that this is NOT simply the timezone offset you are in (like -8 for Pacific Standard Time), it is the negative of it. So how many hours need to be added to your local time to get to UTC.
 //
 // :Ga#
 //      Description:
@@ -330,7 +333,7 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //        "DD" is the degree (90 or less)
 //        "MM" is minutes
 //
-// :SgDDD*MM#
+// :SgsDDD*MM#
 //      Description:
 //        Set Site Longitude
 //      Information:
@@ -339,10 +342,12 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //        "1" if successfully set
 //        "0" otherwise
 //      Parameters:
-//        "DDD" the nmber of degrees (0 to 360)
-//        "MM" is minutes
+//        "s" (optional) is the sign of the longitude (see Remarks)
+//        "DDD" is the number of degrees
+//        "MM" is the minutes
 //      Remarks:
-//        Longitudes are from 0 to 360 going WEST. so 179W is 359 and 179E is 1.
+//        When a sign is provided, longitudes are interpreted as given, with zero at Greenwich but negative coordinates going east (opposite of normal cartographic coordinates)
+//        When a sign is not provided, longitudes are from 0 to 360 going WEST with 180 at Greenwich. So 369 is 179W and 1 is 179E. 190 would be 10W and 170 would be 10E.
 //
 // :SGsHH#
 //      Description:
@@ -375,7 +380,7 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //      Returns:
 //        "1Updating Planetary Data#                              #"
 //      Parameters:
-//        "HHMM" is the month
+//        "MM" is the month
 //        "DD" is the day
 //        "YY" is the year since 2000
 //
@@ -384,9 +389,9 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //
 // :SHHH:MM#
 //      Description:
-//        Set Hour Time (HA)
+//        Set HA (Hour Angle of Polaris)
 //      Information:
-//        This sets the scopes HA.
+//        This sets the scopes HA, which should be that of Polaris.
 //      Returns:
 //        "1" if successfully set
 //        "0" otherwise
@@ -496,24 +501,26 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //      Returns:
 //        "1" if successfully scheduled
 //
-// :MHRx#
+// :MHRxn#
 //      Description:
 //        Home RA stepper via Hall sensor
 //      Information:
 //        This attempts to find the hall sensor and to home the RA ring accordingly.
 //      Parameters:
 //        "x" is either 'R' or 'L' and determines the direction in which the search starts (L is CW, R is CCW).
+//        "n" (Optional) is the maximum number of hours to move while searching for the sensor location. Defaults to 2h. Limited to the range 1h-5h.
 //      Remarks:
-//        The ring is first moved 30 degrees in the initial direction. If no hall sensor is encountered, it will move 60 degrees in
-//        the opposite direction. If a hall sensor is not encountered during that slew, the homing exits with a failure code (0).
+//        The ring is first moved 30 degrees (or the given amount) in the initial direction. If no hall sensor is encountered,
+//        it will move twice the amount (60 degrees by default) in the opposite direction.
+//        If a hall sensor is not encountered during that slew, the homing exits with a failure.
 //        If the sensor is found, it will slew to the middle position of the Hall sensor trigger range and then to the offset
 //        specified in the Home offset position (set with the ":XSHRnnnn#" command).
 //        If the RA ring is positioned such that the Hall sensor is already triggered when the command is received, the mount will move
-//        the RA ring off the trigger in the opposite direction specified for a max of 7.5 degrees before searching 30 degrees in the
+//        the RA ring off the trigger in the opposite direction specified for a max of 15 degrees before searching 30 degrees in the
 //        specified direction.
 //      Returns:
-//        "1" if successfully homed RA
-//        "0" if the hall sensor could not be found or homing has not been enabled in the local config
+//        "1" returns if search is started
+//        "0" if homing has not been enabled in the local config
 //
 // :MAZn.nn#
 //      Description:
@@ -751,9 +758,9 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //
 // :XGH#
 //      Description:
-//        Get HA
+//        Get HA (Hour Angle of Polaris)
 //      Information:
-//        Get the current HA of the mount.
+//        Get the current HA of Polaris that the mount thinks it is.
 //      Returns:
 //        "HHMMSS#"
 //
@@ -785,7 +792,7 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //      Returns:
 //        "<RA driver>,<RA slewMS>,<RA trackMS>|<DEC driver>,<DEC slewMS>,<DEC guideMS>|#"
 //      Parameters:
-//        "<driver>" is one of the supported drivers: U = ULN2003, TU=TMC2209UART, TS=TMC2209STANDALONE, A=A4983
+//        "<driver>" is one of the supported drivers: TU=TMC2209UART, TS=TMC2209STANDALONE, A=A4983
 //        "<slewMS>" is the microstepping divider (1, 2, 4, 8, 15, 21, 64, 128, 256) used when slewing
 //        "<trackMS>" is the microstepping divider (1, 2, 4, 8, 15, 21, 64, 128, 256) used when tracking RA
 //        "<guideMS>" is the microstepping divider (1, 2, 4, 8, 15, 21, 64, 128, 256) used when guiding DEC
@@ -848,11 +855,14 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //      Returns:
 //        nothing
 //
-// :XSDLU#
+// :XSDLUnnnnn#
 //      Description:
 //        Set DEC upper limit
 //      Information:
-//        Set the upper limit for the DEC stepper motor to the current position
+//        Set the upper limit for the DEC stepper motor to the current position if no parameter is given,
+//        otherwise to the given parameter.
+//      Parameters:
+//        "nnnnn" is the number of steps from home that the DEC ring can travel upwards
 //      Returns:
 //        nothing
 //
@@ -864,11 +874,14 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //      Returns:
 //        nothing
 //
-// :XSDLL#
+// :XSDLLnnnnn#
 //      Description:
 //        Set DEC lower limit
 //      Information:
-//        Set the lowerlimit for the DEC stepper motor to the current position
+//        Set the lowerlimit for the DEC stepper motor to the current position if no parameter is given,
+//        otherwise to the given parameter.
+//      Parameters:
+//        "nnnnn" is the number of steps from home that the DEC ring can travel downwards
 //      Returns:
 //        nothing
 //
@@ -893,6 +906,16 @@ bool gpsAqcuisitionComplete(int &indicator);  // defined in c72_menuHA_GPS.hpp
 //        Set the adjustment factor used to speed up "(>1.0)" or slow down "(<1.0)" the tracking speed of the mount
 //      Parameters:
 //        "n.nnn" is the factor to multiply the theoretical speed by
+//      Returns:
+//        nothing
+//
+// :XSTnnnn#
+//      Description:
+//        Set Tracking motor position (no movement)
+//      Information:
+//        This is purely a debugging aid. It is not recommended to call this unless you know what you are doing. It simply sets the internal tracking steps to the given value.
+//      Parameters:
+//        "nnn" is the stepper steps to set
 //      Returns:
 //        nothing
 //
@@ -1112,8 +1135,8 @@ String MeadeCommandProcessor::handleMeadeGetInfo(String inCmd)
             }
         case 'g':  // :Gg
             {
-                _mount->longitude().formatString(achBuffer, "{d}*{m}#");
-                return String(achBuffer);
+                _mount->longitude().formatStringForMeade(achBuffer);
+                return String(achBuffer) + "#";
             }
         case 'c':  // :Gc
             {
@@ -1122,7 +1145,7 @@ String MeadeCommandProcessor::handleMeadeGetInfo(String inCmd)
         case 'G':  // :GG
             {
                 int offset = _mount->getLocalUtcOffset();
-                sprintf(achBuffer, "%+03d#", offset);
+                sprintf(achBuffer, "%+03d#", -offset);
                 return String(achBuffer);
             }
         case 'a':  // :Ga
@@ -1192,13 +1215,13 @@ String MeadeCommandProcessor::handleMeadeGPSCommands(String inCmd)
         {
             if (gpsAqcuisitionComplete(indicator))
             {
-                LOGV1(DEBUG_MEADE, F("MEADE: GPS startup, GPS acquired"));
+                LOG(DEBUG_MEADE, "[MEADE]: GPS startup, GPS acquired");
                 return "1";
             }
         }
     }
 #endif
-    LOGV1(DEBUG_MEADE, F("MEADE: GPS startup, no GPS signal"));
+    LOG(DEBUG_MEADE, "[MEADE]: GPS startup, no GPS signal");
     return "0";
 }
 
@@ -1207,7 +1230,7 @@ String MeadeCommandProcessor::handleMeadeGPSCommands(String inCmd)
 /////////////////////////////
 String MeadeCommandProcessor::handleMeadeSyncControl(String inCmd)
 {
-    if (inCmd[0] == 'M')
+    if (inCmd[0] == 'M')  // :CM
     {
         _mount->syncPosition(_mount->targetRA(), _mount->targetDEC());
         return "NONE#";
@@ -1230,7 +1253,7 @@ String MeadeCommandProcessor::handleMeadeSetInfo(String inCmd)
         {
             Declination dec     = Declination::ParseFromMeade(inCmd.substring(1));
             _mount->targetDEC() = dec;
-            LOGV2(DEBUG_MEADE, F("MEADE: SetInfo: Received Target DEC: %s"), _mount->targetDEC().ToString());
+            LOG(DEBUG_MEADE, "[MEADE]: SetInfo: Received Target DEC: %s", _mount->targetDEC().ToString());
             return "1";
         }
         else
@@ -1248,7 +1271,7 @@ String MeadeCommandProcessor::handleMeadeSetInfo(String inCmd)
         if ((inCmd[3] == ':') && (inCmd[6] == ':'))
         {
             _mount->targetRA().set(inCmd.substring(1, 3).toInt(), inCmd.substring(4, 6).toInt(), inCmd.substring(7, 9).toInt());
-            LOGV2(DEBUG_MEADE, F("MEADE: SetInfo: Received Target RA: %s"), _mount->targetRA().ToString());
+            LOG(DEBUG_MEADE, "[MEADE]: SetInfo: Received Target RA: %s", _mount->targetRA().ToString());
             return "1";
         }
         else
@@ -1271,21 +1294,20 @@ String MeadeCommandProcessor::handleMeadeSetInfo(String inCmd)
             }
 
             DayTime lst(hLST, minLST, secLST);
-            LOGV4(DEBUG_MEADE, F("MEADE: SetInfo: Received LST: %d:%d:%d"), hLST, minLST, secLST);
+            LOG(DEBUG_MEADE, "[MEADE]: SetInfo: Received LST: %d:%d:%d", hLST, minLST, secLST);
             _mount->setLST(lst);
         }
         else if (inCmd[1] == 'P')
         {
             // Set home point
             _mount->setHome(false);
-            _mount->startSlewing(TRACKING);
         }
         else
         {
             // Set HA
             int hHA   = inCmd.substring(1, 3).toInt();
             int minHA = inCmd.substring(4, 6).toInt();
-            LOGV4(DEBUG_MEADE, F("MEADE: SetInfo: Received HA: %d:%d:%d"), hHA, minHA, 0);
+            LOG(DEBUG_MEADE, "[MEADE]: SetInfo: Received HA: %d:%d:%d", hHA, minHA, 0);
             _mount->setHA(DayTime(hHA, minHA, 0));
         }
 
@@ -1312,17 +1334,16 @@ String MeadeCommandProcessor::handleMeadeSetInfo(String inCmd)
         _mount->setLatitude(lat);
         return "1";
     }
-    else if (inCmd[0] == 'g')  // longitude :Sg097*34#
+    else if (inCmd[0] == 'g')  // longitude :Sg097*34# or :Sg-122*54#
     {
         Longitude lon = Longitude::ParseFromMeade(inCmd.substring(1));
-
         _mount->setLongitude(lon);
         return "1";
     }
     else if (inCmd[0] == 'G')  // utc offset :SG+05#
     {
         int offset = inCmd.substring(1, 4).toInt();
-        _mount->setLocalUtcOffset(offset);
+        _mount->setLocalUtcOffset(-offset);
         return "1";
     }
     else if (inCmd[0] == 'L')  // Local time :SL19:33:03#
@@ -1405,7 +1426,7 @@ String MeadeCommandProcessor::handleMeadeMovement(String inCmd)
     }
     else if (inCmd[0] == 'A')
     {
-        LOGV1(DEBUG_MEADE, F("MEADE: Move Az/Alt"));
+        LOG(DEBUG_MEADE, "[MEADE]: Move Az/Alt");
 
         // Move Azimuth or Altitude by given arcminutes
         // :MAZ+32.1# or :MAL-32.1#
@@ -1413,7 +1434,7 @@ String MeadeCommandProcessor::handleMeadeMovement(String inCmd)
         if (inCmd[1] == 'Z')  // :MAZ
         {
             float arcMinute = inCmd.substring(2).toFloat();
-            LOGV2(DEBUG_MEADE, F("MEADE: Move AZ by %f arcmins"), arcMinute);
+            LOG(DEBUG_MEADE, "[MEADE]: Move AZ by %f arcmins", arcMinute);
             _mount->moveBy(AZIMUTH_STEPS, arcMinute);
         }
 #endif
@@ -1449,7 +1470,7 @@ String MeadeCommandProcessor::handleMeadeMovement(String inCmd)
     else if (inCmd[0] == 'X')  // :MX
     {
         long steps = inCmd.substring(2).toInt();
-        LOGV3(DEBUG_MEADE, F("MEADE: Move: %l in %d"), steps, inCmd[1]);
+        LOG(DEBUG_MEADE, "[MEADE]: Move: %l in %d", steps, inCmd[1]);
         if (inCmd[1] == 'r')
             _mount->moveStepperBy(RA_STEPS, steps);
         else if (inCmd[1] == 'd')
@@ -1466,14 +1487,27 @@ String MeadeCommandProcessor::handleMeadeMovement(String inCmd)
     }
     else if ((inCmd[0] == 'H') && (inCmd.length() > 2) && inCmd[1] == 'R')
     {
+#if USE_HALL_SENSOR_RA_AUTOHOME == 1
+        int distance = 2;
+        if (inCmd.length() > 3)
+        {
+            distance = clamp((int) inCmd.substring(3).toInt(), 1, 5);
+            LOG(DEBUG_MEADE, "[MEADE]: RA AutoHome by %dh", distance);
+        }
+
         if (inCmd[2] == 'R')  // :MHRR
         {
-            return _mount->findRAHomeByHallSensor(-1) ? "1" : "0";
+            _mount->findRAHomeByHallSensor(-1, distance);
+            return "1";
         }
         else if (inCmd[2] == 'L')  // :MHRL
         {
-            return _mount->findRAHomeByHallSensor(1) ? "1" : "0";
+            _mount->findRAHomeByHallSensor(1, distance);
+            return "1";
         }
+#else
+        return "0";
+#endif
     }
 
     return "0";
@@ -1490,7 +1524,7 @@ String MeadeCommandProcessor::handleMeadeHome(String inCmd)
     }
     else if (inCmd[0] == 'F')
     {  // Home
-        _mount->goHome();
+        _mount->startSlewingToHome();
     }
     else if (inCmd[0] == 'U')
     {  // Unpark
@@ -1651,11 +1685,25 @@ String MeadeCommandProcessor::handleMeadeExtraCommands(String inCmd)
             {
                 if (inCmd[3] == 'L')  // :XSDLL
                 {
-                    _mount->setDecLimitPosition(false);
+                    if (inCmd.length() > 4)
+                    {
+                        _mount->setDecLimitPositionAbs(false, inCmd.substring(4).toInt());
+                    }
+                    else
+                    {
+                        _mount->setDecLimitPosition(false);
+                    }
                 }
                 else if (inCmd[3] == 'U')  // :XSDLU
                 {
-                    _mount->setDecLimitPosition(true);
+                    if (inCmd.length() > 4)
+                    {
+                        _mount->setDecLimitPositionAbs(true, inCmd.substring(4).toInt());
+                    }
+                    else
+                    {
+                        _mount->setDecLimitPosition(true);
+                    }
                 }
                 else if (inCmd[3] == 'l')  // :XSDLl
                 {
@@ -1678,6 +1726,10 @@ String MeadeCommandProcessor::handleMeadeExtraCommands(String inCmd)
         else if (inCmd[1] == 'S')  // :XSS
         {
             _mount->setSpeedCalibration(inCmd.substring(2).toFloat(), true);
+        }
+        else if (inCmd[1] == 'T')  // :XST
+        {
+            _mount->setTrackingStepperPos(inCmd.substring(2).toInt());
         }
         else if (inCmd[1] == 'M')  // :XSM
         {
@@ -1837,57 +1889,57 @@ String MeadeCommandProcessor::handleMeadeFocusCommands(String inCmd)
 #if (FOCUS_STEPPER_TYPE != STEPPER_TYPE_NONE)
     if (inCmd[0] == '+')  // :F+
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus focusContinuousMove IN"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus focusContinuousMove IN");
         _mount->focusContinuousMove(FOCUS_BACKWARD);
     }
     else if (inCmd[0] == '-')  // :F-
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus focusContinuousMove OUT"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus focusContinuousMove OUT");
         _mount->focusContinuousMove(FOCUS_FORWARD);
     }
     else if (inCmd[0] == 'M')  // :FMnnnn
     {
         long steps = inCmd.substring(1).toInt();
-        LOGV2(DEBUG_MEADE, F("Meade: Focus move by %l steps"), steps);
+        LOG(DEBUG_MEADE, "[MEADE]: Focus move by %l steps", steps);
         _mount->focusMoveBy(steps);
     }
     else if ((inCmd[0] >= '1') && (inCmd[0] <= '4'))  // :F1 - Slowest, F4 fastest
     {
         int speed = inCmd[0] - '0';
-        LOGV2(DEBUG_MEADE, F("Meade: Focus setSpeed %d"), speed);
+        LOG(DEBUG_MEADE, "[MEADE]: Focus setSpeed %d", speed);
         _mount->focusSetSpeedByRate(speed);
     }
     else if (inCmd[0] == 'F')  // :FF
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus setSpeed fastest"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus setSpeed fastest");
         _mount->focusSetSpeedByRate(4);
     }
     else if (inCmd[0] == 'S')  // :FS
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus setSpeed slowest"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus setSpeed slowest");
         _mount->focusSetSpeedByRate(1);
     }
     else if (inCmd[0] == 'p')  // :Fp
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus get stepperPosition"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus get stepperPosition");
         long focusPos = _mount->focusGetStepperPosition();
         return String(focusPos) + "#";
     }
     else if (inCmd[0] == 'P')  // :FPnnn
     {
         long steps = inCmd.substring(1).toInt();
-        LOGV2(DEBUG_MEADE, F("Meade: Focus set stepperPosition %d"), steps);
+        LOG(DEBUG_MEADE, "[MEADE]: Focus set stepperPosition %d", steps);
         _mount->focusSetStepperPosition(steps);
         return "1";
     }
     else if (inCmd[0] == 'B')  // :FB
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus isRunningFocus"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus isRunningFocus");
         return _mount->isRunningFocus() ? "1" : "0";
     }
     else if (inCmd[0] == 'Q')  // :FQ
     {
-        LOGV1(DEBUG_MEADE, F("Meade: Focus stop"));
+        LOG(DEBUG_MEADE, "[MEADE]: Focus stop");
         _mount->focusStop();
     }
 #else
@@ -1908,7 +1960,7 @@ String MeadeCommandProcessor::processCommand(String inCmd)
 {
     if (inCmd[0] == ':')
     {
-        LOGV2(DEBUG_MEADE, F("MEADE: Received command '%s'"), inCmd.c_str());
+        LOG(DEBUG_MEADE, "[MEADE]: Received command '%s'", inCmd.c_str());
 
         // Apparently some LX200 implementations put spaces in their commands..... remove them with impunity.
         int spacePos;
@@ -1917,7 +1969,7 @@ String MeadeCommandProcessor::processCommand(String inCmd)
             inCmd.remove(spacePos, 1);
         }
 
-        LOGV2(DEBUG_MEADE, F("MEADE: Processing command '%s'"), inCmd.c_str());
+        LOG(DEBUG_MEADE, "[MEADE]: Processing command '%s'", inCmd.c_str());
         char command = inCmd[1];
         inCmd        = inCmd.substring(2);
         switch (command)
@@ -1947,7 +1999,7 @@ String MeadeCommandProcessor::processCommand(String inCmd)
             case 'F':
                 return handleMeadeFocusCommands(inCmd);
             default:
-                LOGV2(DEBUG_MEADE, F("MEADE: Received unknown command '%s'"), inCmd.c_str());
+                LOG(DEBUG_MEADE, "[MEADE]: Received unknown command '%s'", inCmd.c_str());
                 break;
         }
     }

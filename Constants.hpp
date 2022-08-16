@@ -14,6 +14,7 @@
 #define BOARD_AVR_MKS_GEN_L_V21 0002
 #define BOARD_AVR_MKS_GEN_L_V2  0003
 #define BOARD_AVR_MKS_GEN_L_V1  0004
+#define BOARD_AVR_RAMPS         0005
 
 // ESP32 based boards
 #define BOARD_ESP32_ESP32DEV 1001
@@ -40,19 +41,16 @@
 
 // Supported stepper models
 #define STEPPER_TYPE_NONE    -1
-#define STEPPER_TYPE_28BYJ48 0
-#define STEPPER_TYPE_NEMA17  1
+#define STEPPER_TYPE_ENABLED 1
 
 // Supported stepper driver models
 #define DRIVER_TYPE_NONE               -1
-#define DRIVER_TYPE_ULN2003            0  // Supports halfstepping
 #define DRIVER_TYPE_A4988_GENERIC      1  // Supports fixed microstepping
 #define DRIVER_TYPE_TMC2209_STANDALONE 2  // Supports fixed microstepping
 #define DRIVER_TYPE_TMC2209_UART       3  // Supports dynamic microstepping
 
 // USB serial port speed according to external controller
-#define SERIAL_BAUDRATE_STELLARIUM_DIRECT 9600
-#define SERIAL_BAUDRATE_ASCOM             19200
+#define SERIAL_BAUDRATE_ASCOM 19200
 
 // Wifi operating modes (ESP32 only)
 #define WIFI_MODE_INFRASTRUCTURE 0  // Infrastructure Only - OAT connects to an existing Router
@@ -82,4 +80,5 @@
 #define DEBUG_GYRO          0x0400  // Gyro activity (tilt/roll) calibration
 #define DEBUG_GPS           0x0800  // GPS activity
 #define DEBUG_FOCUS         0x1000  // Focuser activity
+#define DEBUG_COORD_CALC    0x2000  // Calculations of coordinates
 #define DEBUG_ANY           0xFFFF  // All debug output

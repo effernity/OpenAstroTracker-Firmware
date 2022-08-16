@@ -2,8 +2,7 @@
 
 #if DISPLAY_TYPE > 0
     #if SUPPORT_MANUAL_CONTROL == 1
-
-        #include "MappedDict.hpp"
+        #include "libs/MappedDict/MappedDict.hpp"
 
 bool setZeroPoint = true;
 
@@ -87,7 +86,7 @@ void processManualSlew(lcdButton_t key)
     const bool directionInTable = directionLookup.tryGet(key, &slewDirection);
     if (!directionInTable)
     {
-        LOGV2(DEBUG_MOUNT, F("Unknown LCD button value: %i"), key);
+        LOG(DEBUG_MOUNT, "[SYSTEM]: Unknown LCD button value: %i", key);
         return;
     }
 
@@ -152,12 +151,12 @@ bool processControlKeys()
                     if (setZeroPoint)
                     {
                         // Leaving Control Menu, so set stepper motor positions to zero.
-                        LOGV1(DEBUG_GENERAL, F("CTRL menu: Calling setHome(true)!"));
+                        LOG(DEBUG_GENERAL, "[CTRL]: Calling setHome(true)!");
                         mount.setHome(true);
-                        LOGV3(DEBUG_GENERAL,
-                              F("CTRL menu: setHome(true) returned: RA Current %s, Target: %f"),
-                              mount.RAString(CURRENT_STRING | COMPACT_STRING).c_str(),
-                              mount.RAString(TARGET_STRING | COMPACT_STRING).c_str());
+                        LOG(DEBUG_GENERAL,
+                            "[CTRL]: setHome(true) returned: RA Current %s, Target: %f",
+                            mount.RAString(CURRENT_STRING | COMPACT_STRING).c_str(),
+                            mount.RAString(TARGET_STRING | COMPACT_STRING).c_str());
                         mount.startSlewing(TRACKING);
                     }
 

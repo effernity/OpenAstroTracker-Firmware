@@ -10,11 +10,9 @@
 * and not need to worry about a new version from Git overwriting your setup. 
 * There are multiple ways to define a local config file:
 *  - For all boards/hardware configs:
-*    Create a file called Configuration_local.hpp (best to copy configuration_sample_local.hpp and 
-*    change it as needed)
+*    Create a file called Configuration_local.hpp (best to visit https://config.openastrotech.com/)
 *  - Specific to a board:
-*    Create a file called Configuration_local_<board>.hpp, where <board> is either 'mega' or 
-*    'esp32' or (here, too, best to copy Configuration_sample_local.hpp and change it as needed). 
+*    Create a file called Configuration_local_<board>.hpp, see valid board types in LocalConfiguration.hpp
 *    The code automatically picks the right one at compile time. This is useful if you are 
 *    developer or just have multiple OATs. 
 *  - Custom configurations or advanced builds:
@@ -32,6 +30,9 @@
 // Include the current software version.
 #include "Version.h"
 
+// Include the user-specific local configuration
+#include "LocalConfiguration.hpp"
+
 /**
  * Use default values for any parameters the user didn't provide.
  */
@@ -45,9 +46,6 @@
 #ifndef BOARD
     #error You have to specify the board
 #endif
-
-// Include the user-specific local configuration
-#include "LocalConfiguration.hpp"
 
 // Set to 1 for the northern hemisphere, 0 otherwise
 #ifndef NORTHERN_HEMISPHERE
@@ -74,10 +72,10 @@
  * See Constants.hpp for supported options.
  */
 #ifndef RA_STEPPER_TYPE
-    #define RA_STEPPER_TYPE STEPPER_TYPE_28BYJ48
+    #define RA_STEPPER_TYPE STEPPER_TYPE_ENABLED
 #endif
 #ifndef DEC_STEPPER_TYPE
-    #define DEC_STEPPER_TYPE STEPPER_TYPE_28BYJ48
+    #define DEC_STEPPER_TYPE STEPPER_TYPE_ENABLED
 #endif
 #ifndef AZ_STEPPER_TYPE
     #define AZ_STEPPER_TYPE STEPPER_TYPE_NONE
@@ -94,10 +92,10 @@
  * See Constants.hpp for supported DRIVER_TYPE options.
  */
 #ifndef RA_DRIVER_TYPE
-    #define RA_DRIVER_TYPE DRIVER_TYPE_ULN2003
+    #define RA_DRIVER_TYPE DRIVER_TYPE_TMC2209_UART
 #endif
 #ifndef DEC_DRIVER_TYPE
-    #define DEC_DRIVER_TYPE DRIVER_TYPE_ULN2003
+    #define DEC_DRIVER_TYPE DRIVER_TYPE_TMC2209_UART
 #endif
 #ifndef AZ_DRIVER_TYPE
     #define AZ_DRIVER_TYPE DRIVER_TYPE_NONE
@@ -212,16 +210,21 @@
 // These values are needed to calculate the current position during initial alignment.
 // Use something like Stellarium to look up the RA of Polaris in JNow (on date) variant.
 // This changes slightly over weeks, so adjust every couple of months.
-// This value is from 13.Aug.2020, next adjustment suggested at end 2020
+// This value is from 7.Feb.2022, next adjustment suggested at end 2022
 // The same could be done for the DEC coordinates but they dont change significantly for the next 5 years
 #ifndef POLARIS_RA_HOUR
-    #define POLARIS_RA_HOUR 2
+    #define POLARIS_RA_HOUR 3
 #endif
 #ifndef POLARIS_RA_MINUTE
-    #define POLARIS_RA_MINUTE 58
+    #define POLARIS_RA_MINUTE 0
 #endif
 #ifndef POLARIS_RA_SECOND
-    #define POLARIS_RA_SECOND 34
+    #define POLARIS_RA_SECOND 8
+#endif
+
+// Turn on tracking by default at boot
+#ifndef TRACK_ON_BOOT
+    #define TRACK_ON_BOOT 1
 #endif
 
 // Set this to specify the amount of debug output OAT should send to the serial port.
@@ -235,6 +238,8 @@
 // Append board specific pins data.
 #if (BOARD == BOARD_AVR_MEGA2560)
     #include "boards/AVR_MEGA2560/pins_MEGA2560.hpp"
+#elif (BOARD == BOARD_AVR_RAMPS)
+    #include "boards/RAMPS/pins_RAMPS.hpp"
 #elif (BOARD == BOARD_ESP32_ESP32DEV)
     #include "boards/ESP32_ESP32DEV/pins_ESP32DEV.hpp"
 #elif (BOARD == BOARD_AVR_MKS_GEN_L_V1)
