@@ -6,16 +6,16 @@
 
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef RA_STEP_PIN
-    #define RA_STEP_PIN 19  // STEP
+  #define RA_STEP_PIN 15  // STEP
 #endif
 #ifndef RA_DIR_PIN
-    #define RA_DIR_PIN 21  // DIR
+  #define RA_DIR_PIN  2  // DIR
 #endif
 #ifndef RA_EN_PIN
-    #define RA_EN_PIN 22  // Enable
+  #define RA_EN_PIN   34  // Enable
 #endif
 #ifndef RA_DIAG_PIN
-    #define RA_DIAG_PIN 23  // only needed for autohome function
+  #define RA_DIAG_PIN 0  // only needed for autohome function
 #endif
 #ifndef RA_MS0_PIN
     #define RA_MS0_PIN 4
@@ -24,8 +24,8 @@
     #define RA_MS1_PIN 0
 #endif
 #ifndef RA_MS2_PIN
-    #define RA_MS2_PIN 2
-#endif
+  #define RA_MS2_PIN  21
+#endif    
 // DRIVER_TYPE_TMC2209_UART HardwareSerial port, can be shared across all drivers
 #ifndef RA_SERIAL_PORT
     #define RA_SERIAL_PORT Serial2
@@ -35,19 +35,19 @@
 #endif
 // DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering
 #ifndef DEC_STEP_PIN
-    #define DEC_STEP_PIN 16  // STEP
+  #define DEC_STEP_PIN 19  // STEP
 #endif
 #ifndef DEC_DIR_PIN
-    #define DEC_DIR_PIN 17  // DIR
+  #define DEC_DIR_PIN  21  // DIR
 #endif
 #ifndef DEC_EN_PIN
-    #define DEC_EN_PIN 5  // Enable
+  #define DEC_EN_PIN   12  // Enable
 #endif
 #ifndef DEC_DIAG_PIN
-    #define DEC_DIAG_PIN 18  // only needed for autohome function
+  #define DEC_DIAG_PIN 25  // only needed for autohome function
 #endif
 #ifndef DEC_MS0_PIN
-    #define DEC_MS0_PIN 15
+  #define DEC_MS0_PIN  32
 #endif
 #ifndef DEC_MS1_PIN
     #define DEC_MS1_PIN 8
@@ -62,7 +62,37 @@
 #ifndef DEC_DRIVER_ADDRESS
     #define DEC_DRIVER_ADDRESS 0b01  // Set by MS1/MS2 (MS1 HIGH, MS2 LOW)
 #endif
+/*My changes*/
+#define GPS_RX 27 
+#define GPS_TX 26
 
+// DRIVER_TYPE_TMC2209_UART requires 4 digital pins in Arduino pin numbering. This is the E1 port.
+#ifndef FOCUS_STEP_PIN
+  #define FOCUS_STEP_PIN 23  // STEP
+#endif
+#ifndef FOCUS_DIR_PIN
+  #define FOCUS_DIR_PIN  22  // DIR
+#endif
+#ifndef FOCUS_EN_PIN
+  #define FOCUS_EN_PIN   0  // Enable
+#endif
+#ifndef FOCUS_DIAG_PIN
+  #define FOCUS_DIAG_PIN 0  // only needed for autohome function
+#endif
+// DRIVER_TYPE_TMC2209_UART requires 2 additional digital pins for SoftwareSerial, can be shared across all drivers
+#ifndef FOCUS_SERIAL_PORT_TX
+  #define FOCUS_SERIAL_PORT_TX 16 // SoftwareSerial TX port
+#endif
+#ifndef FOCUS_SERIAL_PORT_RX
+  #define FOCUS_SERIAL_PORT_RX 17 // SoftwareSerial RX port
+#endif
+#ifndef FOCUS_SERIAL_PORT
+  #define FOCUS_SERIAL_PORT Serial2 // SoftwareSerial TX port
+#endif
+#ifndef FOCUS_DRIVER_ADDRESS
+  #define FOCUS_DRIVER_ADDRESS 0b10
+#endif
+/*End of My changes*/
 #define SW_SERIAL_UART 0
 
 // DISPLAY_TYPE_LCD_JOY_I2C_SSD1306 requires 3 analog inputs in Arduino pin numbering

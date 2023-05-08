@@ -94,9 +94,9 @@ void setup()
 
     LOG(DEBUG_ANY, "[SYSTEM]: Hello, universe, this is OAT %s!", VERSION);
 
-#if USE_GPS == 1
-    GPS_SERIAL_PORT.begin(GPS_BAUD_RATE);
-#endif
+  #if USE_GPS == 1
+  GPS_SERIAL_PORT.begin(GPS_BAUD_RATE, SERIAL_8N1, GPS_RX, GPS_TX);
+  #endif
 
 //Turn on dew heater
 #if DEW_HEATER == 1

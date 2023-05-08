@@ -709,15 +709,13 @@ void Mount::configureFocusDriver(Stream *serial, float rsense, byte driveraddres
 {
     _driverFocus = new TMC2209Stepper(serial, rsense, driveraddress);
     _driverFocus->begin();
-        #if UART_CONNECTION_TEST_TXRX == 1
-    bool UART_Rx_connected = false;
-    UART_Rx_connected      = connectToDriver(_driverFocus, "Focus");
-    if (!UART_Rx_connected)
-    {
-        digitalWrite(ALT_EN_PIN,
-                     HIGH);  //Disable motor for safety reasons if UART connection fails to avoid operating at incorrect rms_current
-    }
-        #endif
+    #if UART_CONNECTION_TEST_TXRX == 1
+      bool UART_Rx_connected = false;
+      UART_Rx_connected = connectToDriver( _driverFocus, "Focus" );
+      if (!UART_Rx_connected) {
+          digitalWrite(FOCUS_EN_PIN, HIGH);    //Disable motor for safety reasons if UART connection fails to avoid operating at incorrect rms_current
+      }
+    #endif
     _driverFocus->toff(0);
         #if USE_VREF == 0  //By default, Vref is ignored when using UART to specify rms current.
     _driverFocus->I_scale_analog(false);

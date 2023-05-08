@@ -589,7 +589,13 @@
 
 // GPS
 #if USE_GPS == 1
+  #if defined(ESP32)
+    #define GPS_SERIAL_PORT Serial1 // TODO: Resolve potential conflict with RA_SERIAL_PORT & DEC_SERIAL_PORT
     #define GPS_BAUD_RATE 9600
+  #elif defined(__AVR_ATmega2560__)
+    #define GPS_SERIAL_PORT Serial1
+    #define GPS_BAUD_RATE 9600
+  #endif
 #endif
 
 ////////////////////////////
