@@ -4,6 +4,10 @@
 // Save this as Configuration_local.hpp in the folder where you placed the firmware code.
 // Unique ConfigKey: FW:O,HS:N,BD:E,RS:N9,RD:TU,RAP900:O90:S8:T128:,RMSA3000:V1200:,RTR:N,RT:1,DS:N9,DD:TU,DAP900:O90:S16:T128:,DMSA3000:V1200:,DT:1,DY:NO,LM:N,FC:Y,FS:BY,FD:TU,FAP100:O80:S1:H10:,FMSA600:V250:,WW:N,GP:N,AP:N
 
+
+// Use the much higher performance stepper library. 
+#define NEW_STEPPER_LIB 
+
 // We live in the Northern Hemisphere
 #define NORTHERN_HEMISPHERE 1
 
@@ -37,10 +41,18 @@
 
 // Define some RA stepper motor settings
 #define RA_STEPPER_ACCELERATION 3000
-#define RA_STEPPER_SPEED 1200
+#define RA_STEPPER_SPEED 1800
 
 // Track immediately after boot
-#define TRACK_ON_BOOT 0
+#define TRACK_ON_BOOT 1
+
+#ifdef NEW_STEPPER_LIB 
+
+#define RA_SLEWING_ACCELERATION_DEG 2.0 // deg/s/s 
+
+#define RA_SLEWING_SPEED_DEG 2.0 // deg/s 
+
+#endif 
 
 // Define limits for RA... 
 #define RA_LIMIT_LEFT     5.5f
@@ -71,9 +83,23 @@
 // Is it going the wrong way?
 #define DEC_INVERT_DIR  0
 
+#ifdef NEW_STEPPER_LIB 
+
+#define DEC_SLEWING_ACCELERATION_DEG 2.0 // degs/s/s 
+
+#define DEC_SLEWING_SPEED_DEG 2.0 // deg/s 
+
+#endif 
+
 // Define some DEC stepper motor settings
 #define DEC_STEPPER_ACCELERATION 3000
 #define DEC_STEPPER_SPEED 1200
+
+// Define DEC limits 
+
+#define DEC_LIMIT_UP 90 // degrees from Home 
+
+#define DEC_LIMIT_DOWN 45 // degrees from Home 
 
 // Using the 16 tooth gear (recommended) for DEC belt
 #define DEC_PULLEY_TEETH 16
@@ -94,6 +120,14 @@
 // Display configuration 
 // Define the type of display we are using. Currently: No display
 #define DISPLAY_TYPE DISPLAY_TYPE_NONE
+
+//////////////////////////////// 
+// InfoDisplay configuration  
+// Define the type of info display we are using. Currently: No info display 
+#define INFO_DISPLAY_TYPE INFO_DISPLAY_TYPE_NONE 
+#define INFO_DISPLAY_I2C_ADDRESS 0x3C 
+#define INFO_DISPLAY_I2C_SDA_PIN 20 
+#define INFO_DISPLAY_I2C_SCL_PIN 21 
 
 ////////////////////////////////
 // WiFi configuration 
