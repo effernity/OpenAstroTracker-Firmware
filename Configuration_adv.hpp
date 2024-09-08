@@ -69,6 +69,9 @@
     #ifndef RA_SLEW_MICROSTEPPING
         #define RA_SLEW_MICROSTEPPING 8  // Microstep mode set by MS pin strapping. Use the same microstep mode for both slewing & tracking
     #endif
+    #if defined(RA_TRACKING_MICROSTEPPING) && (RA_TRACKING_MICROSTEPPING != RA_SLEW_MICROSTEPPING)
+        #error With A4988 drivers or TMC2209 drivers in Standalone mode, RA microstepping must be the same for slewing and tracking. Delete RA_TRACKING_MICROSTEPPING from your config.
+    #endif
     #define RA_TRACKING_MICROSTEPPING RA_SLEW_MICROSTEPPING
 #else
     #error Unknown RA driver type
@@ -88,6 +91,9 @@
     #ifndef DEC_SLEW_MICROSTEPPING
         #define DEC_SLEW_MICROSTEPPING                                                                                                     \
             16  // Only UART drivers support dynamic switching. Use the same microstep mode for both slewing & guiding
+    #endif
+    #if defined(DEC_GUIDE_MICROSTEPPING) && (DEC_GUIDE_MICROSTEPPING != DEC_SLEW_MICROSTEPPING)
+        #error With A4988 drivers or TMC2209 drivers in Standalone mode, DEC microstepping must be the same for slewing and guiding. Delete DEC_GUIDE_MICROSTEPPING from your config.
     #endif
     #define DEC_GUIDE_MICROSTEPPING DEC_SLEW_MICROSTEPPING
 #else
@@ -147,12 +153,14 @@
 #define GT2_BELT_PITCH 2.0f  // mm
 
 // the Circumference of the RA wheel.  V1 = 1057.1  |  V2 = 1131.0
-#if RA_WHEEL_VERSION == 1
-    #define RA_WHEEL_CIRCUMFERENCE 1057.1f
-#elif RA_WHEEL_VERSION >= 2
-    #define RA_WHEEL_CIRCUMFERENCE 1132.73f
-#else
-    #error Unsupported RA wheel version, please recheck RA_WHEEL_VERSION
+#ifndef RA_WHEEL_CIRCUMFERENCE
+    #if RA_WHEEL_VERSION == 1
+        #define RA_WHEEL_CIRCUMFERENCE 1057.1f
+    #elif RA_WHEEL_VERSION >= 2
+        #define RA_WHEEL_CIRCUMFERENCE 1132.73f
+    #else
+        #error Unsupported RA wheel version, please recheck RA_WHEEL_VERSION
+    #endif
 #endif
 
 // the Circumference of the DEC wheel.
@@ -204,6 +212,10 @@
     #define RA_TRACKING_LIMIT 7.0f
 #endif
 
+#ifndef RA_PHYSICAL_LIMIT
+    #define RA_PHYSICAL_LIMIT 7.0f
+#endif
+
 #ifndef DEC_TRANSMISSION
     #define DEC_TRANSMISSION (DEC_WHEEL_CIRCUMFERENCE / (DEC_PULLEY_TEETH * GT2_BELT_PITCH))
 #endif
@@ -220,10 +232,18 @@
 #endif
 
 #ifndef DEC_LIMIT_UP
-    #define DEC_LIMIT_UP 0.0f
+    #ifdef OAM
+        #define DEC_LIMIT_UP 100.0f
+    #else
+        #define DEC_LIMIT_UP 0.0f
+    #endif
 #endif
 #ifndef DEC_LIMIT_DOWN
-    #define DEC_LIMIT_DOWN 0.0f
+    #ifdef OAM
+        #define DEC_LIMIT_DOWN 100.0f
+    #else
+        #define DEC_LIMIT_DOWN 0.0f
+    #endif
 #endif
 
 ////////////////////////////
@@ -313,7 +333,9 @@
     #endif
 
     // the Circumference of the AZ rotation. 808mm dia.
-    #define AZ_CIRCUMFERENCE 2538.4f
+    #ifndef AZ_CIRCUMFERENCE
+        #define AZ_CIRCUMFERENCE 2538.4f
+    #endif
     #ifndef AZIMUTH_STEPS_PER_REV
         #define AZIMUTH_STEPS_PER_REV                                                                                                      \
             (AZ_CORRECTION_FACTOR * (AZ_CIRCUMFERENCE / (AZ_PULLEY_TEETH * GT2_BELT_PITCH)) * AZ_STEPPER_SPR                               \
@@ -360,24 +382,35 @@
         #define ALT_STEPPER_ACCELERATION 2000
     #endif
 
-    // the Circumference of the AZ rotation. 770mm dia.
-    #define ALT_CIRCUMFERENCE 2419.0f
-
     #ifndef AUTOPA_VERSION
         #define AUTOPA_VERSION 1
     #endif
 
-    #if AUTOPA_VERSION == 1
-        // the ratio of the ALT gearbox for AutoPA V1 (40:3)
-        #define ALT_WORMGEAR_RATIO (40.0f / 3.0f)
-    #else
-        // the ratio of the ALT gearbox for AutoPA V2 (40:1)
-        #define ALT_WORMGEAR_RATIO (40.0f)
-    #endif
+    #ifdef OAM
+        #ifndef ALT_ROD_PITCH
+            #define ALT_ROD_PITCH 1.0  // mm/rev
+        #endif
+        // the Circumference of the AZ rotation. 209.1mm radius.
+        #define ALT_CIRCUMFERENCE 209.1 * 2 * PI
+        #define ALTITUDE_STEPS_PER_REV                                                                                                     \
+            (ALT_CORRECTION_FACTOR * (ALT_CIRCUMFERENCE / ALT_ROD_PITCH) * ALT_STEPPER_SPR * ALT_MICROSTEPPING)  // Actually u-steps/rev
 
-    #define ALTITUDE_STEPS_PER_REV                                                                                                         \
-        (ALT_CORRECTION_FACTOR * (ALT_CIRCUMFERENCE / (ALT_PULLEY_TEETH * GT2_BELT_PITCH)) * ALT_STEPPER_SPR * ALT_MICROSTEPPING           \
-         * ALT_WORMGEAR_RATIO)  // Actually u-steps/rev
+    #else
+        // the Circumference of the AZ rotation. 770mm dia.
+        #define ALT_CIRCUMFERENCE 2419.0f
+        #if AUTOPA_VERSION == 1
+            // the ratio of the ALT gearbox for AutoPA V1 (40:3)
+            #define ALT_WORMGEAR_RATIO (40.0f / 3.0f)
+        #else
+            // the ratio of the ALT gearbox for AutoPA V2 (40:1)
+            #define ALT_WORMGEAR_RATIO (40.0f)
+        #endif
+        #ifndef ALTITUDE_STEPS_PER_REV
+            #define ALTITUDE_STEPS_PER_REV                                                                                                 \
+                (ALT_CORRECTION_FACTOR * (ALT_CIRCUMFERENCE / (ALT_PULLEY_TEETH * GT2_BELT_PITCH)) * ALT_STEPPER_SPR * ALT_MICROSTEPPING   \
+                 * ALT_WORMGEAR_RATIO)  // Actually u-steps/rev
+        #endif
+    #endif
 
     #ifndef ALTITUDE_STEPS_PER_ARC_MINUTE
         #define ALTITUDE_STEPS_PER_ARC_MINUTE (ALTITUDE_STEPS_PER_REV / (360 * 60.0f))  // Used to determine move distance in steps
@@ -458,6 +491,9 @@
     #ifndef RA_HOMING_SENSOR_ACTIVE_STATE
         #define RA_HOMING_SENSOR_ACTIVE_STATE LOW
     #endif
+    #ifndef RA_HOMING_SENSOR_SEARCH_DEGREES
+        #define RA_HOMING_SENSOR_SEARCH_DEGREES 30
+    #endif
 #endif
 
 //////////////////////////////////////////
@@ -470,6 +506,9 @@
     #ifndef DEC_HOMING_SENSOR_ACTIVE_STATE
         #define DEC_HOMING_SENSOR_ACTIVE_STATE LOW
     #endif
+    #ifndef DEC_HOMING_SENSOR_SEARCH_DEGREES
+        #define DEC_HOMING_SENSOR_SEARCH_DEGREES 30
+    #endif
 #endif
 
 // RA EndSwitch support
@@ -480,6 +519,12 @@
 #else
     #ifndef RA_END_SWITCH_ACTIVE_STATE
         #define RA_END_SWITCH_ACTIVE_STATE LOW
+    #endif
+    // You can define how many degrees to slew back after the end switch has triggered.
+    // Mechanical end switches might have a hysteresis behavior, meaning once signaled,
+    // it needs to move well back beyond the signal point to become un-signaled.
+    #ifndef RA_ENDSWITCH_BACKSLEW_DEG
+        #define RA_ENDSWITCH_BACKSLEW_DEG 0.5
     #endif
 #endif
 
@@ -493,6 +538,13 @@
     #ifndef DEC_END_SWITCH_ACTIVE_STATE
         #define DEC_END_SWITCH_ACTIVE_STATE LOW
     #endif
+    // You can define how many degrees to slew back after the end switch has triggered.
+    // Mechanical end switches might have a hysteresis behavior, meaning once signaled,
+    // it needs to move well back beyond the signal point to become un-signaled.
+    #ifndef DEC_ENDSWITCH_BACKSLEW_DEG
+        #define DEC_ENDSWITCH_BACKSLEW_DEG 0.5
+    #endif
+
 #endif
 
 //////////////////////////////////////////
@@ -504,6 +556,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                         ///
 // FEATURE SUPPORT SECTION ///
+//     FOR MOUNTS WITH     ///
+//       LCD DISPLAY       ///
 //                         ///
 //////////////////////////////
 //
@@ -544,7 +598,10 @@
     #define SUPPORT_MANUAL_CONTROL 0
     #define SUPPORT_CALIBRATION    0
     #define SUPPORT_INFO_DISPLAY   0
-
+    #if SUPPORT_DRIFT_ALIGNMENT == 1
+        #error "Drift Alignment is only available with a display."
+    #endif
+    #define SUPPORT_DRIFT_ALIGNMENT 0
 #endif  // DISPLAY_TYPE
 
 // Enable Meade protocol communication over serial
