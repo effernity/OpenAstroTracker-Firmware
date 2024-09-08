@@ -92,6 +92,10 @@
 #ifndef FOCUS_DRIVER_ADDRESS
   #define FOCUS_DRIVER_ADDRESS 0b10
 #endif
+//homing sensor pin
+#ifndef RA_HOMING_SENSOR_PIN
+    #define RA_HOMING_SENSOR_PIN 34
+#endif
 /*End of My changes*/
 #define SW_SERIAL_UART 0
 
@@ -105,6 +109,8 @@
 #ifndef LCD_KEY_SENSE_PUSH_PIN
     #define LCD_KEY_SENSE_PUSH_PIN 36
 #endif
+
+
 
 //Serial port for external debugging
 #if DEBUG_SEPARATE_SERIAL == 1
