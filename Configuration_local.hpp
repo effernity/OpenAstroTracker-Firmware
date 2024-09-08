@@ -33,9 +33,6 @@
 #define RA_SLEW_MICROSTEPPING         8
 #define RA_TRACKING_MICROSTEPPING     128
 
-// TMC2209 Stealth Mode (spreadCycle) - When set to 0, tracking is more precise, but noisy (high-pitched sound). When set to 1, they are silent.
-#define RA_UART_STEALTH_MODE          0
-
 // Is it going the wrong way?
 #define RA_INVERT_DIR  0
 
@@ -47,11 +44,8 @@
 #define TRACK_ON_BOOT 1
 
 #ifdef NEW_STEPPER_LIB 
-
 #define RA_SLEWING_ACCELERATION_DEG 2.0 // deg/s/s 
-
 #define RA_SLEWING_SPEED_DEG 2.0 // deg/s 
-
 #endif 
 
 // Define limits for RA... 
@@ -77,18 +71,12 @@
 #define DEC_SLEW_MICROSTEPPING         16
 #define DEC_GUIDE_MICROSTEPPING        128
 
-// TMC2209 Stealth Mode (spreadCycle) - When set to 0, tracking is more precise, but noisy (high-pitched sound). When set to 1, they are silent.
-#define DEC_UART_STEALTH_MODE          0
-
 // Is it going the wrong way?
 #define DEC_INVERT_DIR  0
 
 #ifdef NEW_STEPPER_LIB 
-
 #define DEC_SLEWING_ACCELERATION_DEG 2.0 // degs/s/s 
-
 #define DEC_SLEWING_SPEED_DEG 2.0 // deg/s 
-
 #endif 
 
 // Define some DEC stepper motor settings
@@ -97,24 +85,33 @@
 
 // Define DEC limits 
 
-#define DEC_LIMIT_UP 90 // degrees from Home 
-
-#define DEC_LIMIT_DOWN 45 // degrees from Home 
+#define DEC_LIMIT_UP 113 // degrees from Home 
+#define DEC_LIMIT_DOWN 65 // degrees from Home 
 
 // Using the 16 tooth gear (recommended) for DEC belt
 #define DEC_PULLEY_TEETH 16
 
+#define RA_UART_STEALTH_MODE 0 
+#define DEC_UART_STEALTH_MODE 0 
+
 #define FOCUS_STEPPER_TYPE    STEPPER_TYPE_ENABLE
 #define FOCUS_DRIVER_TYPE     DRIVER_TYPE_TMC2209_UART
-//#define FOCUS_STEPPER_SPR 2048.0f
+#define FOCUS_STEPPER_SPR 2048.0f
 
 #define FOCUS_MOTOR_CURRENT_RATING         100     // Current rating of focus motor in mA
 #define FOCUS_OPERATING_CURRENT_SETTING  80     // Operating setting as a percentage of focus motor rating
-#define FOCUS_STEPPER_SPEED              600     // Default speed when moving focus motor in steps/s
+#define FOCUS_MICROSTEPPING 1 // steps 
+#define FOCUS_STEPPER_SPEED              400     // Default speed when moving focus motor in steps/s
 #define FOCUS_STEPPER_ACCELERATION   250
 #define FOCUS_UART_STEALTH_MODE            1     // Run the focuser silently
 #define FOCUSER_ALWAYS_ON                1
 #define FOCUSER_MOTOR_HOLD_SETTING       10 // %
+
+//////////////////////////////// 
+// Auto Homing addons 
+#define USE_HALL_SENSOR_RA_AUTOHOME 1 
+#define RA_HOMING_SENSOR_PIN 34 
+#define RA_HOMING_SENSOR_SEARCH_DEGREES 10 
 
 ////////////////////////////////
 // Display configuration 
