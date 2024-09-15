@@ -87,6 +87,7 @@ void stepperControlTimerCallback(void *payload)
     Mount *mountCopy = reinterpret_cast<Mount *>(payload);
     if (mountCopy)
         mountCopy->interruptLoop();
+        vTaskDelay(1); // 1 ms // This will limit max stepping rate to 1 kHz
 }
     #endif
 #endif
@@ -473,7 +474,7 @@ void setup()
                             "StepperControl",    // Name of this task
                             32767,               // Stack space in bytes
                             &mount,              // payload
-                            1,                   // Priority (2 is higher than 1)
+                            2,                   // Priority (2 is higher than 1)
                             &StepperTask,        // The location that receives the thread id
                             0);                  // The core to run this on
 
