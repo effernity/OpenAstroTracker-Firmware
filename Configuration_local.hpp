@@ -12,11 +12,11 @@
 #define NORTHERN_HEMISPHERE 1
 
 // We are using the ESP32 board
-//#if defined(BOARD) && BOARD != BOARD_ESP32_ESP32DEV
- //  #error Selected PIO environment does not match this configuration
-//#else
+#if defined(BOARD) && BOARD != BOARD_ESP32_ESP32DEV
+   #error Selected PIO environment does not match this configuration
+#else
     #define BOARD BOARD_ESP32_ESP32DEV
-//#endif
+#endif
 
 ////////////////////////////////
 // RA Stepper configuration 
